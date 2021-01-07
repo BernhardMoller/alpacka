@@ -250,15 +250,24 @@ class tfidf_pipeline:
     def get_dot(self):
         return self.Dot
 
-    # #### Input_data_type ####
-    # def get_input_data_type(self):
-    #     return self.Input_data_type
-    #
-    # ####
-    # def set_input_data_type(self, string: str):
-    #     if string not in self.Supported_inputs:
-    #         raise TypeError(
-    #             f"Selected input data type ({string}) not currently supported as an input. "
-    #             f"\n Please format the input in on of the supported formats. "
-    #             f"\n Supported formats: {self.Supported_inputs}")
-    #     self.Input_data_type = string
+    def print_outliers_to_terminal(lst: List[List[list]], sort: bool = True):
+        """
+        prints the input text outliers to the terminal window with sorted into the sigma outlier
+        @param path: str
+        @param lst: list
+        @param sort: bool
+        """
+        if sort:
+            lst.sort()
+        else:
+            pass
+        sigmas = ["1", "2", "3"]
+        for outliers, sigma in zip(lst, sigmas):
+            if sort:
+                print(f"Printing {sigma}-sigma outliers, alphabetically sorted")
+            else:
+                print(f"Printing {sigma}-sigma outliers")
+            print(20 * "#")
+            for word in outliers:
+                print(f"{word}")
+            print(20 * "#")

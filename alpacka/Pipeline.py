@@ -1,7 +1,7 @@
 from alpacka.pipes.ncof_pipeline import ncof_pipeline
 from alpacka.pipes.tfidf_pipeline import tfidf_pipeline
 
-class Pipes:
+class Pipeline:
     def __init__(self):
         self.ncof = ncof_pipeline()
         self.ncof.set_class_perspective(1)
@@ -9,7 +9,7 @@ class Pipes:
 
 
 def main():
-    pipe = Pipes()
+    pipe = Pipeline()
     pipe.ncof.print_all_methods()
     pipe.tfidf.print_all_methods()
 
