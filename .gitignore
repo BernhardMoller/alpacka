@@ -3,9 +3,9 @@ dist/
 tests/
 __pycache__/
 alpacka.egg-info/
-.setup.py
 demos/.ipynb_checkpoints/
 .idea/
 alpacka.iml
 venv-alpacka/
 Stopord.txt
+config.ini
