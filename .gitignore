@@ -9,3 +9,4 @@ alpacka.iml
 venv-alpacka/
 Stopord.txt
 config.ini
+alpacka/pipes/data_process
