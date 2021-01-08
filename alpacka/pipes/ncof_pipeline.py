@@ -7,27 +7,19 @@ from configparser import ConfigParser
 class ncof_pipeline:
 
     def __init__(self):
-        # config = ConfigParser()
-        # path = config_path
-        # config.read(path)
-        # self.Dot = int(config['NCOF']['Dot'])
+
         self.Dot = 10
         self.Class_perspective = None
-        # self.Supported_inputs = config['NCOF']['Supported_inputs']
         self.Verbose = True
-
         self.num_words = None
-        # if config['NCOF']['Input_data_type'] not in self.Supported_inputs:
-        #     raise TypeError(
-        #         f"Selected input data type ({config['NCOF']['Input_data_type']}) not currently supported as an input. "
-        #         f"\n Please format the input in on of the supported formats. \n Supported formats: "
-        #         f"{self.Supported_inputs}")
-        # self.Input_data_type = config['NCOF']['Input_data_type']
     def print_all_methods(self):
         object_methods = [method_name for method_name in dir(self) if callable(getattr(self, method_name))]
         print(object_methods)
 
-
+    def set_num_words(self, new_val):
+        self.num_words=new_val
+    def get_num_words(self):
+        return self.num_words
     #### Check input data type ####
     def check_data_type(self, data):
         """self function that checks if the input data type is known to be compatible with the remaining functions"""
@@ -202,42 +194,25 @@ class ncof_pipeline:
         """Returns the Class_perspective class variable"""
         return self.Class_perspective
 
-    # #### Input_data_type ####
-    # def get_input_data_type(self):
-    #     """Returns the Input_data_type class variable"""
-    #     return self.Input_data_type
-    #
-    # ####
-    # def set_input_data_type(self, input_type_name: str):
-    #     """
-    #     Sets the Input_data_type class variable
-    #     @param input_type_name: str
-    #     """
-    #     if input_type_name not in self.Supported_inputs:
-    #         raise TypeError(
-    #             f"Selected input data type ({input_type_name}) not currently supported as an input. "
-    #             f"Please format the input in one of the supported formats."
-    #             f"Supported formats: {self.Supported_inputs}")
-    #     self.Input_data_type = input_type_name
-
-def print_outliers_to_terminal(lst: List[List[list]], sort: bool = True):
-    """
-    prints the input text outliers to the terminal window with sorted into the sigma outlier
-    @param path: str
-    @param lst: list
-    @param sort: bool
-    """
-    if sort:
-        lst.sort()
-    else:
-        pass
-    sigmas = ["1", "2", "3"]
-    for outliers, sigma in zip(lst, sigmas):
+    def print_outliers_to_terminal(lst: List[List[list]], sort: bool = True):
+        """
+        prints the input text outliers to the terminal window with sorted into the sigma outlier
+        @param path: str
+        @param lst: list
+        @param sort: bool
+        """
         if sort:
-            print(f"Printing {sigma}-sigma outliers, alphabetically sorted")
+            for elm in lst:
+                elm.sort()
         else:
-            print(f"Printing {sigma}-sigma outliers")
-        print(20 * "#")
-        for word in outliers:
-            print(f"{word}")
-        print(20 * "#")
+            pass
+        sigmas = ["1", "2", "3"]
+        for outliers, sigma in zip(lst, sigmas):
+            if sort:
+                print(f"Printing {sigma}-sigma outliers, alphabetically sorted")
+            else:
+                print(f"Printing {sigma}-sigma outliers")
+            print(20 * "#")
+            for word in outliers:
+                print(f"{word}")
+            print(20 * "#")

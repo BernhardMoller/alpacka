@@ -7,26 +7,9 @@ from configparser import ConfigParser
 class tfidf_pipeline:
 
     def __init__(self):
-        # config = ConfigParser()
-        # path = config_path
-        # config.read(path)
-        # self.Dot = int(config['TFIDF']['Dot'])
         self.Dot = 10
-        # self.Supported_inputs = config['TFIDF']['Supported_inputs']
         self.Verbose = True
         self.num_words = None
-        # c_var = config['TFIDF']['num_words']
-        # if c_var == 'None':
-        #     self.num_words = None
-        # else:
-        #     self.num_words = int(c_var)
-
-        # if config['TFIDF']['Input_data_type'] not in self.Supported_inputs:
-        #     raise TypeError(
-        #         f"Selected input data type ({config['TFIDF']['Input_data_type']}) not currently supported as an "
-        #         f"input. \n Please format the input in on of the supported formats. \n Supported formats: "
-        #         f"{self.Supported_inputs}")
-        # self.Input_data_type = config['TFIDF']['Input_data_type']
     def print_all_methods(self):
         object_methods = [method_name for method_name in dir(self) if callable(getattr(self, method_name))]
         print(object_methods)
@@ -75,7 +58,10 @@ class tfidf_pipeline:
         are returned as a list of lists where index 0 is the 1-2 sigma outliers, index 1 is the 2-3 sigma outlers,
         and index 2 is 3-> outliers The outliers for the negative class is stored in [0] The outliers for the
         positive class is stored in [1] """
-        self.inliers, self.outliers = pf.sigma_splitter_TF_IDF(self.get_score)
+        score = self.get_score()
+        score = score.tolist()
+
+        self.inliers, self.outliers = pf.sigma_splitter_TF_IDF(score)
         if self.Verbose:
             print(
                 f" Inliers added under 'self.Inliers' \n Positive outliers added under 'self.Pos_outliers' \n use "
@@ -250,7 +236,7 @@ class tfidf_pipeline:
     def get_dot(self):
         return self.Dot
 
-    def print_outliers_to_terminal(lst: List[List[list]], sort: bool = True):
+    def print_outliers_to_terminal(self, lst: List[List[list]], sort = None):
         """
         prints the input text outliers to the terminal window with sorted into the sigma outlier
         @param path: str
@@ -258,7 +244,8 @@ class tfidf_pipeline:
         @param sort: bool
         """
         if sort:
-            lst.sort()
+            for elm in lst:
+                elm.sort()
         else:
             pass
         sigmas = ["1", "2", "3"]

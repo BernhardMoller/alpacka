@@ -14,5 +14,4 @@ def main():
     pipe.tfidf.print_all_methods()
 
 if __name__ == '__main__':
-
     main()
