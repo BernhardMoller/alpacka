@@ -23,11 +23,12 @@ class ncof_pipeline:
     #### Check input data type ####
     def check_data_type(self, data):
         """self function that checks if the input data type is known to be compatible with the remaining functions"""
-        if type(data).__name__ != 'list':
+        ok = ['list' , 'Series']
+        if type(data).__name__ not in ok:
             raise TypeError(
                 f"Input type ({type(data)}) not supported as an input. "
                 f"Please format the input in on of the supported formats. "
-                f"Supported formats: List")
+                f"Supported formats: {ok}")
 
     #### calc_NCOF ####
     def calc_ncof(self, data: List[List[str]], labels: List[int]):

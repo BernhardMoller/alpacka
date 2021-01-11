@@ -52,30 +52,30 @@ def calc_NCOF_from_raw_data(data: list, labels: list, class_perspective: int , n
         for elm in data_int[i]:
             occurrences[lab][elm] = occurrences[lab][elm] + 1
 
-    # "Summerize the number of words in each class and normalize the ocurrence score for each class with this score"
-    # occ_norm = np.zeros([rows, cols])
-    # for i, elm in enumerate(occurrences):
-    #     occ_norm[i] = elm / np.sum(elm)
-    #
-    # "make all scores except the ones from the wanted class perspective negative"
-    # occ_norm = occ_norm * -1
-    # occ_norm[class_perspective] = occ_norm[class_perspective] * -1
-    #
+    "Summerize the number of words in each class and normalize the ocurrence score for each class with this score"
+    occ_norm = np.zeros([rows, cols])
+    for i, elm in enumerate(occurrences):
+        occ_norm[i] = elm / np.sum(elm)
+
+    "make all scores except the ones from the wanted class perspective negative"
+    occ_norm = occ_norm * -1
+    occ_norm[class_perspective] = occ_norm[class_perspective] * -1
+
     "test"
     "calculate and normalize the occurence freq for all token in all classes except the class perspective one"
-    tmp_occ = np.zeros([1,cols])
-    tmp_norm = 0
-    for i , elm in enumerate(occurrences):
-        if i != class_perspective:
-            tmp_occ += elm
-            tmp_norm += sum(elm)
-    norm_all_else = tmp_occ/tmp_norm
-    norm_perspective = occurrences[class_perspective] / sum(occurrences[class_perspective])
-    ncof = norm_perspective-norm_all_else
+    # tmp_occ = np.zeros([1,cols])
+    # tmp_norm = 0
+    # for i , elm in enumerate(occurrences):
+    #     if i != class_perspective:
+    #         tmp_occ += elm
+    #         tmp_norm += sum(elm)
+    # norm_all_else = tmp_occ/tmp_norm
+    # norm_perspective = occurrences[class_perspective] / sum(occurrences[class_perspective])
+    # ncof = norm_perspective-norm_all_else
 
     "OUTPUT"
     "Clculate the NCOF score by summerizing the matrix for each integer, or by 'collapsing' the rows of the matrix"
-    # ncof = np.sum(occ_norm, 0)
+    ncof = np.sum(occ_norm, 0)
 
     "A list of each words index in the NCOF score"
     index_words = t.index_word
