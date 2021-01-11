@@ -12,7 +12,7 @@ install_requirements = [
 ]
 
 setup(name='alpacka',
-      version='0.0.8',
+      version='0.0.81',
       description='The alpacka Python package, used to extract and visualize metadata from text data sets',
       author='Fredrik Möller',
       author_email='fredrikmoller@recordefuture.com',

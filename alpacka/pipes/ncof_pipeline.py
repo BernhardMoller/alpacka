@@ -1,7 +1,6 @@
 from typing import List
 from alpacka.functions import statistic_methods as s
 from alpacka.functions import presentation_functions as pf
-from configparser import ConfigParser
 
 
 class ncof_pipeline:
@@ -195,10 +194,9 @@ class ncof_pipeline:
         """Returns the Class_perspective class variable"""
         return self.Class_perspective
 
-    def print_outliers_to_terminal(lst: List[List[list]], sort: bool = True):
+    def print_outliers_to_terminal(self, lst: List[List[list]], sort: bool = True):
         """
         prints the input text outliers to the terminal window with sorted into the sigma outlier
-        @param path: str
         @param lst: list
         @param sort: bool
         """
