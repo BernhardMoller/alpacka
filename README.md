@@ -59,12 +59,12 @@ All the data is now transformed to lowercase and characters such as
 ### Importing and initiating alpacka
 Now we are ready to import and initiate alpacka. 
  
-    from alpacka.Pipes import Pipes
+    from alpacka.Pipeline import Pipeline
 	
-	p = Pipes()
+	p = Pipeline()
 
 
-Now the `NCOF` and `TF-IDF` pipelines are initiated through the wrapper `Pipes` and the induvidual analysis methods can be accessed be calling:
+Now the `NCOF` and `TF-IDF` pipelines are initiated through the wrapper `Pipeline` and the induvidual analysis methods can be accessed be calling:
 
     p.ncof.some_functions()
    or
