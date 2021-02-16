@@ -8,7 +8,8 @@ install_requirements = [
     "sklearn",
     "matplotlib",
     "tensorflow>=2.2",
-    "numpy==1.18"
+    "numpy==1.18",
+    "innvestigate"
 ]
 
 setup(name='alpacka',

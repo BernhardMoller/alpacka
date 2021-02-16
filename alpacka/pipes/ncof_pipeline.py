@@ -40,15 +40,16 @@ class ncof_pipeline:
         @return: Score, Dict: List[float], dict
         """
         self.check_data_type(data)
-        self.score, self.dict = s.calc_NCOF_from_raw_data(data, labels, self.get_class_perspective(), self.num_words)
+        score, self.dict = s.calc_NCOF_from_raw_data(data, labels, self.get_class_perspective(), self.num_words)
         if self.Verbose:
             print(f" NCOF score added under 'self.score'"
                   f" use self.get_--- to access the result")
+        return score , self.dict
 
     ####
-    def get_score(self):
-        """Returns the NCOF score for the object as a list"""
-        return self.score
+    # def get_score(self):
+    #     """Returns the NCOF score for the object as a list"""
+    #     return self.score
 
     ####
     def get_dict(self):
@@ -56,32 +57,32 @@ class ncof_pipeline:
         return self.dict
 
     #### Split score ####
-    def split_score(self):
+    def split_score(self, score):
         """splits the NCOF score into three categories based on the NCOF value for each element. Returns the element
         indexes corresponding to the following three categories. Inliers:      elements with NCOF score between mean
         +- 1 sigma, Pos_outliers: elements with NCOF score greater than mean +1 sigma, Neg_outliers: elements with
         NCOF score less than mean - 1 sigma. The outliers are returned as a list of lists where index 0 is the 1-2
         sigma outliers, index 1 is the 2-3 sigma outlers, and index 2 is 3-> outliers """
-        self.inliers, self.pos_outliers, self.neg_outliers = pf.sigma_splitter(self.score)
+        inliers, pos_outliers, neg_outliers = pf.sigma_splitter(score)
         if self.Verbose:
             print(
                 f" Inliers added under 'self.inliers' \n Positive outliers added under 'self.pos_outliers' \n "
                 f"Negative outliers added under 'self.neg_outliers' \n use self.get_--- to access the result")
+        return inliers, pos_outliers, neg_outliers
+    ####
+    # def get_inliers(self):
+    #     """Returns the NCOF inliers as a list"""
+    #     return self.inliers
 
     ####
-    def get_inliers(self):
-        """Returns the NCOF inliers as a list"""
-        return self.inliers
-
-    ####
-    def get_pos_outliers(self):
-        """Returns the Positive NCOF outliers as a list of lists"""
-        return self.pos_outliers
-
-    ####
-    def get_neg_outliers(self):
-        """Returns the Negative NCOF outliers as a list of lists"""
-        return self.neg_outliers
+    # def get_pos_outliers(self):
+    #     """Returns the Positive NCOF outliers as a list of lists"""
+    #     return self.pos_outliers
+    #
+    # ####
+    # def get_neg_outliers(self):
+    #     """Returns the Negative NCOF outliers as a list of lists"""
+    #     return self.neg_outliers
 
     ####
 
@@ -99,9 +100,9 @@ class ncof_pipeline:
         return words_all
 
     #### PLOT ####
-    def scatter(self):
+    def scatter(self, score, inliers, pos_outliers, neg_outliers):
         """Creates a scatter plot of the NCOF score and parameters saved in the object"""
-        pf.NCOF_plot(self.get_score(), self.get_inliers(), self.get_pos_outliers(), self.get_neg_outliers(),
+        pf.NCOF_plot(score, inliers, pos_outliers, neg_outliers,
                      self.get_dot(), self.get_class_perspective())
 
     #### PLOT histograms ####
@@ -135,28 +136,6 @@ class ncof_pipeline:
             # words.append(a)
             words_all_no_stopwords.append(words)
         return words_all_no_stopwords
-
-    # #### SAVE LIST TO TXTFILE  ####   Exists as a function now
-    # def save_2_file(self, path: str, lst: list, sort: bool = True):
-    #     """
-    #     Saves the input list of words to a txt file at the specified path.
-    #     If no file is available at path location the function creates a new, else overwrites the existing file
-    #     @param path: str
-    #     @param lst: list
-    #     @param sort: bool
-    #     """
-    #     if sort:
-    #         lst.sort()
-    #     else:
-    #         pass
-    #     if os.path.isfile(path):
-    #         with open(path, 'w') as file:
-    #             for w in lst:
-    #                 file.write(str(w) + '\n')
-    #     else:
-    #         with open(path, "w+") as file:
-    #             for w in lst:
-    #                 file.write(str(w) + '\n')
 
     #####  CONFIG  ###
     #### Verbose ####

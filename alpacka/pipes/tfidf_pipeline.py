@@ -35,15 +35,15 @@ class tfidf_pipeline:
         """
         self.check_data_type(data)
 
-        self.score, self.dict = s.calc_TFIDF_from_raw_data(data, labels, nr_words=self.get_num_words())
+        score, self.dict = s.calc_TFIDF_from_raw_data(data, labels, nr_words=self.get_num_words())
         if self.Verbose:
             print(f" TF-IDF score added under 'self.score' "
                   f" use self.get_--- to access the result")
-
+        return score , self.dict
     ####
-    def get_score(self):
-        """Returns the Tf-idf score stored in the object"""
-        return self.score
+    # def get_score(self):
+    #     """Returns the Tf-idf score stored in the object"""
+    #     return self.score
 
     ####
     def get_dict(self):
@@ -51,50 +51,50 @@ class tfidf_pipeline:
         return self.dict
 
     #### Split score ####
-    def split_score(self):
+    def split_score(self, score):
         """splits the TF-idf score into two categories based on the Tf-idf value for each element. Returns the
         element indexes corresponding to the following three categories. INPUT: Inliers:      elements with tf-idf
         score between mean +- 1 sigma, outliers: elements with tf-idf score greater than mean +1 sigma, The outliers
         are returned as a list of lists where index 0 is the 1-2 sigma outliers, index 1 is the 2-3 sigma outlers,
         and index 2 is 3-> outliers The outliers for the negative class is stored in [0] The outliers for the
         positive class is stored in [1] """
-        score = self.get_score()
-        score = score.tolist()
+        # score = self.get_score()
+        # score = score.tolist()
 
-        self.inliers, self.outliers = pf.sigma_splitter_TF_IDF(score)
+        inliers, outliers = pf.sigma_splitter_TF_IDF(score)
         if self.Verbose:
             print(
                 f" Inliers added under 'self.Inliers' \n Positive outliers added under 'self.Pos_outliers' \n use "
                 f"self.get_--- to access the result")
-
+        return inliers , outliers
     ####
-    def get_inliers(self):
-        """Returns the Tf-idf inliers indexes stored in the object
-        The inliers for the negative class is stored in [0]
-        The inliers for the positive class is stored in [1]
-        OUTPUT:
-            type : list of lists containing integer"""
-        return self.inliers
-
-    ####
-    def get_outliers(self):
-        """Returns the Tf-idf outlier indexes stored  in the object
-        The outliers for the negative class is stored in [0]
-        The outliers for the positive class is stored in [1]
-        OUTPUT:
-            type : list of lists containing integer"""
-        return self.outliers
+    # def get_inliers(self):
+    #     """Returns the Tf-idf inliers indexes stored in the object
+    #     The inliers for the negative class is stored in [0]
+    #     The inliers for the positive class is stored in [1]
+    #     OUTPUT:
+    #         type : list of lists containing integer"""
+    #     return self.inliers
+    #
+    # ####
+    # def get_outliers(self):
+    #     """Returns the Tf-idf outlier indexes stored  in the object
+    #     The outliers for the negative class is stored in [0]
+    #     The outliers for the positive class is stored in [1]
+    #     OUTPUT:
+    #         type : list of lists containing integer"""
+    #     return self.outliers
 
     ####
 
     #### unique_outliers_per_class ####
-    def unique_outliers_per_class(self):
+    def unique_outliers_per_class(self, outliers):
         """Seperates outliers that only occures in either the positive or negative class
         sor of only works for dataset with two classes
         OUTPUT:
             outliers_unique_neg: List[List[Any]]
             outliers_unique_pos: List[List[Any]]"""
-        outliers = self.get_outliers()
+        # outliers = self.get_outliers()
 
         neg = outliers[0]
         pos = outliers[1]
@@ -108,22 +108,22 @@ class tfidf_pipeline:
             outliers_unique_from_positive_class.append(list(in_pos_not_neg))
             outliers_unique_from_negative_class.append(list(in_neg_not_pos))
 
-        self.outliers_unique_neg = outliers_unique_from_negative_class
-        self.outliers_unique_pos = outliers_unique_from_positive_class
+        outliers_unique_neg = outliers_unique_from_negative_class
+        outliers_unique_pos = outliers_unique_from_positive_class
         if self.Verbose:
             print(
                 f" Outliers unique for the two classes added under self.outliers_unique_neg & self.outliers_unique_pos"
                 f"\n use self.get_--- to access the result")
-
+        return outliers_unique_pos, outliers_unique_neg
     ####
-    def get_outliers_unique_neg(self):
-        """Returns the ouliers for each sigma line that only appears in the negative class"""
-        return self.outliers_unique_neg
-
-    ####
-    def get_outliers_unique_pos(self):
-        """Returns the ouliers for each sigma line that only appears in the positive class"""
-        return self.outliers_unique_pos
+    # def get_outliers_unique_neg(self):
+    #     """Returns the ouliers for each sigma line that only appears in the negative class"""
+    #     return self.outliers_unique_neg
+    #
+    # ####
+    # def get_outliers_unique_pos(self):
+    #     """Returns the ouliers for each sigma line that only appears in the positive class"""
+    #     return self.outliers_unique_pos
 
     #### indexes 2 words ####
     def ind_2_txt(self, lst_of_lst):
@@ -137,7 +137,7 @@ class tfidf_pipeline:
         return words_all
 
     #### Plot ####
-    def scatter(self, classes: List[str] = None):
+    def scatter(self, score, inliers, outliers ,classes: List[str] = None):
         """
         Plots the tf-idf score stored in the object, inliers and outliers are plotted in seperate colours for clarity
         Currently only supports two classes
@@ -145,10 +145,8 @@ class tfidf_pipeline:
         """
         if classes is None:
             classes = ['negative', 'positive']
-        Dot = self.get_dot()
-        for score, inliers, outliers, class_name in zip(self.get_score(), self.get_inliers(), self.get_outliers(),
-                                                        classes):
-            pf.TFIDF_plot(score, inliers, outliers, Dot, class_name)
+        for score, inliers, outliers, class_name in zip(score, inliers, outliers, classes):
+            pf.TFIDF_plot(score, inliers, outliers, self.get_dot(), class_name)
 
     #### plot outliers ####
     def plot_outliers(self, score: list, outliers: List[List[List[int]]], from_class: List[str]):
