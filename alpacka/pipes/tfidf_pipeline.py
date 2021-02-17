@@ -234,10 +234,9 @@ class tfidf_pipeline:
     def get_dot(self):
         return self.Dot
 
-    def print_outliers_to_terminal(self, lst: List[List[list]], sort = None):
+    def get_result(self, score, lst: List[List[list]], sort: bool = True):
         """
         prints the input text outliers to the terminal window with sorted into the sigma outlier
-        @param path: str
         @param lst: list
         @param sort: bool
         """
@@ -254,5 +253,6 @@ class tfidf_pipeline:
                 print(f"Printing {sigma}-sigma outliers")
             print(20 * "#")
             for word in outliers:
-                print(f"{word}")
+                index = list(self.dict.values()).index(word)
+                print(f"{word}: {score[index]}")
             print(20 * "#")

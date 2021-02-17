@@ -6,7 +6,6 @@ from alpacka.functions import presentation_functions as pf
 class ncof_pipeline:
 
     def __init__(self):
-
         self.Dot = 10
         self.Class_perspective = None
         self.Verbose = True
@@ -30,16 +29,19 @@ class ncof_pipeline:
                 f"Supported formats: {ok}")
 
     #### calc_NCOF ####
-    def calc_ncof(self, data: List[List[str]], labels: List[int]):
+    def calc_ncof(self, data: List[List[str]], labels: List[int], stop_words: List = None):
         """
         Calculates the NCOF score the the input data. Returns a list with a score and a dictionary of the data.
         The score for each index is associated with the word with the same index in the dictionary
 
         @param data: List[List[str]]
         @param labels: List[int]
+        @param stop_words: List[str]
         @return: Score, Dict: List[float], dict
         """
         self.check_data_type(data)
+        if stop_words != None: # removes the stop words pre calculating the NCOF score.
+            data = self.remove_stop_words(data,stop_words)
         score, self.dict = s.calc_NCOF_from_raw_data(data, labels, self.get_class_perspective(), self.num_words)
         if self.Verbose:
             print(f" NCOF score added under 'self.score'"
@@ -173,7 +175,7 @@ class ncof_pipeline:
         """Returns the Class_perspective class variable"""
         return self.Class_perspective
 
-    def print_outliers_to_terminal(self, lst: List[List[list]], sort: bool = True):
+    def get_result(self, score ,lst: List[List[list]], sort: bool = True):
         """
         prints the input text outliers to the terminal window with sorted into the sigma outlier
         @param lst: list
@@ -192,5 +194,6 @@ class ncof_pipeline:
                 print(f"Printing {sigma}-sigma outliers")
             print(20 * "#")
             for word in outliers:
-                print(f"{word}")
+                index = list(self.dict.values()).index(word)
+                print(f"{word}: {score[index]}")
             print(20 * "#")
