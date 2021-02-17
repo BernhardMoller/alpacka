@@ -86,23 +86,16 @@ For this walkthrough we will limit the analysis to the $10,000$ most common word
 #### Calculate NCOF
 Now we are ready to calculate the NCOF score for the review data and its scores. This is done by calling the `.calc_ncof(data,labels)` function.  For this example the input in the `data` field is the texts, and the `labels` is the review scores. 
 
-    p.ncof.calc_ncof(text, score)
-We now have an array, `ncof_score`, that contains the NCOF results for our data. This array will have the size `[1,num_words]` and positive and negatives values, indicating if a token is more or less common in investigated class (positives values), or the remaining classes (negative values). The array can be accessed by calling: 
+    ncof_score ,dictionary  = p.ncof.calc_ncof(text, score)
+We now have an array, `ncof_score`, that contains the NCOF results for our data. This array will have the size `[1,num_words]` and positive and negatives values, indicating if a token is more or less common in investigated class (positives values), or the remaining classes (negative values). 
 
-	ncof_score = p.ncof.get_score()
-
-In addition to an array with the scores the `.calc_ncof()` function saves a dictionary that maps the indexes in the  `ncof_score ` array to its text representations, and can be accessed by calling:
-
-    dictionary = p.ncof.get_dict()
-
+In addition to an array with the scores the `.calc_ncof()` function saves a dictionary that maps the indexes in the  `ncof_score` array to its text representations. The dictionary can also be returned by calling `.get_dict()`. 
 
 #### Sorting results
 To sort the array into inliers and outliers for the positive and negative values the function `.split_score()`needs to be called. The inliers can be accessed through: 
 
-    p.ncof.split_score()
+    inliers , ncof_pos , ncof_neg  = p.ncof.split_score(ncof_score)
     
-    ncof_pos = p.ncof.get_pos_outliers()  
-    ncof_neg = p.ncof.get_neg_outliers()
 Which will return the indexes of the words in the dictionary that are considered as outliers in the NCOF results. 
 
 The results are sorted within the `ncof_pos `and `ncof_neg ` as the following:
@@ -118,7 +111,7 @@ The results are sorted within the `ncof_pos `and `ncof_neg ` as the following:
 #### Plotting results
 These results can be plotted by calling the function `.scatter()` which will give visual information regarding what tokens are over or under represented in the investigated class. 
 
-    p.ncof.scatter()
+    p.ncof.scatter(ncof_score , inliers , ncof_pos , ncof_neg)
 
 #### Converting results from indexes to text
 Since it is quite difficult to interpret the socre for each the indexes directly, it is suggested that the indexes are transformed back to their text representations. This can be done by calling the `.ncof.ind_2_txt(data)`function, the function input should be either indexes of the positive or negative outlers. 
@@ -142,9 +135,9 @@ Now stop words can be removed from our results.
 #### Print results to terminal. 
 We have now gone through all the steps required to produce, plot, and clean the reults from the NCOF analysis method. The last part is to either save the results to a file or to print them to the terminal. Since format to save the results to is a user preference no function for this is provided in the alpacka package, however the results can be printed to the terminal by calling the following function.
 
-    p.ncof.print_outliers_to_terminal(words_pos, sort = True)
+    p.ncof.get_result(ncof_score, words_pos, sort = True)
     
-    p.ncof.print_outliers_to_terminal(words_neg, sort = True)
+    p.ncof.get_result(ncof_score, words_neg, sort = True)
 
 The input variable `sort` can be set to either `True` or `False` and decides if the results should be printed as alphabetically sorted or not. 
    
