@@ -8,12 +8,12 @@ install_requirements = [
     "sklearn",
     "matplotlib",
     "tensorflow>=2.2",
-    "numpy==1.18",
+    "numpy>=1.18",
     "innvestigate"
 ]
 
 setup(name='alpacka',
-      version='0.0.9',
+      version='0.0.93',
       description='The alpacka Python package, used to extract and visualize metadata from text data sets',
       author='Fredrik Möller',
       author_email='fredrikmoller@recordefuture.com',
