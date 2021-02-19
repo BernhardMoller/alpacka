@@ -50,8 +50,7 @@ class ncof_pipeline:
             data = new_data
         score, self.dict = s.calc_NCOF_from_raw_data(data, labels, self.get_class_perspective(), self.num_words)
         if self.Verbose:
-            print(f" NCOF score added under 'self.score'"
-                  f" use self.get_--- to access the result")
+            print(f"NCOF score calculated successfully, no errors occured" )
         return score , self.dict
 
     ####
@@ -74,8 +73,7 @@ class ncof_pipeline:
         inliers, pos_outliers, neg_outliers = pf.sigma_splitter(score)
         if self.Verbose:
             print(
-                f" Inliers added under 'self.inliers' \n Positive outliers added under 'self.pos_outliers' \n "
-                f"Negative outliers added under 'self.neg_outliers' \n use self.get_--- to access the result")
+                f"Score split successfully, no errors occured ")
         return inliers, pos_outliers, neg_outliers
     ####
     # def get_inliers(self):
