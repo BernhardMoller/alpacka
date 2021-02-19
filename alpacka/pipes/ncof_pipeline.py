@@ -41,7 +41,13 @@ class ncof_pipeline:
         """
         self.check_data_type(data)
         if stop_words != None: # removes the stop words pre calculating the NCOF score.
-            data = self.remove_stop_words(data,stop_words)
+            new_data = []
+            for sent in data:
+                words = sent.split()
+                for s_word in stop_words:
+                    while s_word in words: words.remove(s_word)
+                new_data.append(words)
+            data = new_data
         score, self.dict = s.calc_NCOF_from_raw_data(data, labels, self.get_class_perspective(), self.num_words)
         if self.Verbose:
             print(f" NCOF score added under 'self.score'"
@@ -96,10 +102,15 @@ class ncof_pipeline:
         @param list_of_list_of_list: List[List[List]] @return: words_all: List[List[List]]
         """
         words_all = []
-        for list in list_of_list_of_list:
-            words = pf.ind_2_txt(list, self.dict)
-            words_all.append(words)
-        return words_all
+
+        if len(list_of_list_of_list) == 3: # in input is pos or neg outliers
+            for list in list_of_list_of_list:
+                words = pf.ind_2_txt(list, self.dict)
+                words_all.append(words)
+            return words_all
+        else: # if input is inliers
+            return pf.ind_2_txt(list_of_list_of_list, self.dict)
+
 
     #### PLOT ####
     def scatter(self, score, inliers, pos_outliers, neg_outliers):
@@ -132,12 +143,15 @@ class ncof_pipeline:
         @return: words_all_no_stopwords: List[List[str]]
         """
         words_all_no_stopwords = []
-        for lst in list_of_list:
-            # words = []
-            words = [w for w in lst if w not in stop_words]
-            # words.append(a)
-            words_all_no_stopwords.append(words)
-        return words_all_no_stopwords
+        if len(list_of_list) == 3: # input is pos or neg outliers
+            for lst in list_of_list:
+                # words = []
+                words = [w for w in lst if w not in stop_words]
+                # words.append(a)
+                words_all_no_stopwords.append(words)
+            return words_all_no_stopwords
+        else: # input is inliers
+            return [w for w in list_of_list if w not in stop_words]
 
     #####  CONFIG  ###
     #### Verbose ####
@@ -181,19 +195,28 @@ class ncof_pipeline:
         @param lst: list
         @param sort: bool
         """
-        if sort:
-            for elm in lst:
-                elm.sort()
-        else:
-            pass
-        sigmas = ["1", "2", "3"]
-        for outliers, sigma in zip(lst, sigmas):
+        if len(lst) == 3: # input is pos or neg outliers
+            sigmas = ["1", "2", "3"]
+            for outliers, sigma in zip(lst, sigmas):
+                if sort:
+                    for elm in lst:
+                        elm.sort()
+                    print(f"Printing {sigma}-sigma outliers, alphabetically sorted")
+                else:
+                    print(f"Printing {sigma}-sigma outliers")
+                print(20 * "#")
+                for word in outliers:
+                    index = list(self.dict.values()).index(word)
+                    print(f"{word}: {score[index]}")
+                print(20 * "#")
+        else: # input is inliers
             if sort:
-                print(f"Printing {sigma}-sigma outliers, alphabetically sorted")
+                lst.sort()
+                print(f"Printing inliers, alphabetically sorted")
             else:
-                print(f"Printing {sigma}-sigma outliers")
+                print(f"Printing inliers")
             print(20 * "#")
-            for word in outliers:
+            for word in lst:
                 index = list(self.dict.values()).index(word)
                 print(f"{word}: {score[index]}")
             print(20 * "#")
