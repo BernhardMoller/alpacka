@@ -118,7 +118,7 @@ def calc_TFIDF_from_raw_data(data: list, labels: list, nr_words: int) -> Tuple[o
     "seperate the data o the corresponding class "
     data_sep = []
     for elm in np.unique(labels):
-        data_sep.append([data[i] for i in class_indexes[elm]])
+        data_sep.append([data[i] for i in class_indexes[int(elm)]])
 
     "Calculate the TF-IDF score for each class seperately and stort the score for all classes in a matrix "
     TF_IDF_score = np.zeros((len(np.unique(labels)), dict_size))
