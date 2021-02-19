@@ -5,11 +5,12 @@ from alpacka.functions import presentation_functions as pf
 
 class ncof_pipeline:
 
-    def __init__(self, num_words, class_perspective):
+    def __init__(self, num_words, class_perspective, verbose):
         self.Dot = 10
         self.Class_perspective = class_perspective
-        self.Verbose = True
+        self.Verbose = verbose
         self.num_words = num_words
+
     def print_all_methods(self):
         object_methods = [method_name for method_name in dir(self) if callable(getattr(self, method_name))]
         print(object_methods)

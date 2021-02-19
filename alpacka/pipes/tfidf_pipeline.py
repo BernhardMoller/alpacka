@@ -1,15 +1,17 @@
 from typing import List
 from alpacka.functions import statistic_methods as s
 from alpacka.functions import presentation_functions as pf
-from configparser import ConfigParser
+import numpy as np
+import pandas as pd
 
 
 class tfidf_pipeline:
+    def __init__(self, num_words, class_perspective, verbose):
+        self.Dot = 5
+        self.Verbose = verbose
+        self.num_words = num_words
+        self.Class_perspective = class_perspective
 
-    def __init__(self):
-        self.Dot = 10
-        self.Verbose = True
-        self.num_words = None
     def print_all_methods(self):
         object_methods = [method_name for method_name in dir(self) if callable(getattr(self, method_name))]
         print(object_methods)
@@ -17,14 +19,15 @@ class tfidf_pipeline:
     #### Check input data type ####
     def check_data_type(self, data):
         """self function that checks if the input data type is known to be compatible with the remaining functions"""
-        if type(data).__name__ != 'list':
+        if type(data).__name__ != 'list' and type(data).__name__ != 'Series':
+            # if type(data).__name__ != 'list':
             raise TypeError(
                 f"Input type ({type(data)}) not currently supported as an input. "
                 f"\n Please format the input in on of the supported formats. "
                 f"\n Supported formats: list")
 
     #### calc_TFIDF ####
-    def calc_tfidf(self, data: list, labels: list):
+    def calc_tfidf(self, data: list, labels: list, stop_words: List = None):
         """
         Calculates the TF-IDF score for the positive and negative class.
         Returns the score and dictionary used for the calculations as lists where the indexes of the elements acts as
@@ -34,12 +37,25 @@ class tfidf_pipeline:
         @return: Score, Dict: List[List[float]] , dict
         """
         self.check_data_type(data)
+        # set all labels = classprespective == 1 all other label = 0
+        class_labels = labels == self.Class_perspective
+        labels = np.zeros(len(labels))
+        labels[class_labels] = 1
+        # remove stop words if argument is passed
+        if stop_words != None:  # removes the stop words pre calculating the NCOF score.
+            new_data = []
+            for sent in data:
+                words = sent.split()
+                for s_word in stop_words:
+                    while s_word in words: words.remove(s_word)
+                new_data.append(' '.join(words))
+            data = pd.Series(new_data)
 
         score, self.dict = s.calc_TFIDF_from_raw_data(data, labels, nr_words=self.get_num_words())
         if self.Verbose:
-            print(f" TF-IDF score added under 'self.score' "
-                  f" use self.get_--- to access the result")
-        return score , self.dict
+            print(f" TF-IDF score calculated successfully, no errors occured ")
+        return score, self.dict
+
     ####
     # def get_score(self):
     #     """Returns the Tf-idf score stored in the object"""
@@ -64,28 +80,8 @@ class tfidf_pipeline:
         inliers, outliers = pf.sigma_splitter_TF_IDF(score)
         if self.Verbose:
             print(
-                f" Inliers added under 'self.Inliers' \n Positive outliers added under 'self.Pos_outliers' \n use "
-                f"self.get_--- to access the result")
-        return inliers , outliers
-    ####
-    # def get_inliers(self):
-    #     """Returns the Tf-idf inliers indexes stored in the object
-    #     The inliers for the negative class is stored in [0]
-    #     The inliers for the positive class is stored in [1]
-    #     OUTPUT:
-    #         type : list of lists containing integer"""
-    #     return self.inliers
-    #
-    # ####
-    # def get_outliers(self):
-    #     """Returns the Tf-idf outlier indexes stored  in the object
-    #     The outliers for the negative class is stored in [0]
-    #     The outliers for the positive class is stored in [1]
-    #     OUTPUT:
-    #         type : list of lists containing integer"""
-    #     return self.outliers
-
-    ####
+                f"TF-idf score split into inliers, positive outliers, and negative outliers. No errors occured ")
+        return inliers, outliers
 
     #### unique_outliers_per_class ####
     def unique_outliers_per_class(self, outliers):
@@ -112,9 +108,9 @@ class tfidf_pipeline:
         outliers_unique_pos = outliers_unique_from_positive_class
         if self.Verbose:
             print(
-                f" Outliers unique for the two classes added under self.outliers_unique_neg & self.outliers_unique_pos"
-                f"\n use self.get_--- to access the result")
+                f"Symmetric set difference taken between the outliers from the positve and negative class")
         return outliers_unique_pos, outliers_unique_neg
+
     ####
     # def get_outliers_unique_neg(self):
     #     """Returns the ouliers for each sigma line that only appears in the negative class"""
@@ -137,7 +133,7 @@ class tfidf_pipeline:
         return words_all
 
     #### Plot ####
-    def scatter(self, score, inliers, outliers ,classes: List[str] = None):
+    def scatter(self, score, inliers, outliers, classes: List[str] = None):
         """
         Plots the tf-idf score stored in the object, inliers and outliers are plotted in seperate colours for clarity
         Currently only supports two classes
@@ -160,7 +156,7 @@ class tfidf_pipeline:
 
     #### PLOT MERGED HISTOGRAMS####
     def plot_merged_histogram(self, data: List[List[float]], bins: int = None, x_label: str = None, y_label: str = None,
-                              title: str = None, legend: List[str] = None):
+                              title: str = None, legend=None):
         """
         Plots a merged histogram of the input data
         @param data: List[List[float]]
@@ -170,14 +166,16 @@ class tfidf_pipeline:
         @param title: str
         @param legend: List[str]
         """
+        if legend is None:
+            legend = ['Negative class', 'Positive class']
         pf.plot_merged_histogram(data, bins, x_label, y_label, title, legend)
         if self.Verbose:
             print(f"Printing merged histograms")
 
-    #### PLOT HISTOGRAMS####
+    # #### PLOT HISTOGRAMS####
     def plot_histogram(self, data: List[float], bins: int = None, x_label: str = None, y_label: str = None,
                        title: str = None,
-                       legend: List[str] = None):
+                       legend=[None]):
         """
         Plots a histogram of the input data
         @param data: List[float]
@@ -189,7 +187,7 @@ class tfidf_pipeline:
         """
         pf.plot_histogram(data, bins, x_label, y_label, title, legend)
         if self.Verbose:
-            print(f"Printing merged histograms")
+            print(f"Printing histograms of TF-IDF score for {legend}")
 
     #### remove stop words ####
     def remove_stop_words(self, lst_of_lst: List[List[str]], stop_words: List[str]) -> List[List[str]]:
@@ -205,7 +203,7 @@ class tfidf_pipeline:
         return words_all
 
     #####  CONFIG  ###
-    def set_verbose(self, bol: bool= False):
+    def set_verbose(self, bol: bool = False):
         """
         Set the self variable verbose,
         @param bol: bool, standard value False
@@ -234,25 +232,34 @@ class tfidf_pipeline:
     def get_dot(self):
         return self.Dot
 
-    def get_result(self, score, lst: List[List[list]], sort: bool = True):
+    def get_result(self, score ,lst: List[List[list]], sort: bool = True):
         """
         prints the input text outliers to the terminal window with sorted into the sigma outlier
         @param lst: list
         @param sort: bool
         """
-        if sort:
-            for elm in lst:
-                elm.sort()
-        else:
-            pass
-        sigmas = ["1", "2", "3"]
-        for outliers, sigma in zip(lst, sigmas):
+        if len(lst) == 3: # input is pos or neg outliers
+            sigmas = ["1", "2", "3"]
+            for outliers, sigma in zip(lst, sigmas):
+                if sort:
+                    for elm in lst:
+                        elm.sort()
+                    print(f"Printing {sigma}-sigma outliers, alphabetically sorted")
+                else:
+                    print(f"Printing {sigma}-sigma outliers")
+                print(20 * "#")
+                for word in outliers:
+                    index = list(self.dict.values()).index(word)
+                    print(f"{word}: {score[index]}")
+                print(20 * "#")
+        else: # input is inliers
             if sort:
-                print(f"Printing {sigma}-sigma outliers, alphabetically sorted")
+                lst.sort()
+                print(f"Printing inliers, alphabetically sorted")
             else:
-                print(f"Printing {sigma}-sigma outliers")
+                print(f"Printing inliers")
             print(20 * "#")
-            for word in outliers:
+            for word in lst:
                 index = list(self.dict.values()).index(word)
                 print(f"{word}: {score[index]}")
             print(20 * "#")
