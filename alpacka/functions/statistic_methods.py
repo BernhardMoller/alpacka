@@ -78,14 +78,17 @@ def calc_NCOF_from_raw_data(data: list, labels: list, class_perspective: int , n
     ncof = np.sum(occ_norm, 0)
 
     "A list of each words index in the NCOF score"
-    index_words = t.index_word
+    all_words = [word for word in t.index_word.values().__iter__()]
 
     "removing the first index (0) in the NCOF score and index-dict since it is reserved from the keras tokenizer implementation. https://github.com/keras-team/keras-preprocessing/blob/master/keras_preprocessing/text.py"
     "this is also done to keep the indexation cosistent through the package"
     ncof = ncof[1:]
 
-    words = [elm for elm in index_words.values()]
-    dictionary = {i: words[i] for i in range(0, cols - 1)}
+    if t.num_words:
+        words = all_words[:t.num_words]
+        dictionary = {i: word for i , word in enumerate(words)}
+    else:
+        dictionary = t.index_word
 
     return ncof, dictionary
 

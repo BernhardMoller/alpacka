@@ -11,7 +11,7 @@ install_requirements = [
     "numpy>=1.18"]
 
 setup(name='alpacka',
-      version='0.0.99',
+      version='0.1.0',
       description='The alpacka Python package, used to extract and visualize metadata from text data sets',
       author='Fredrik Möller',
       author_email='fredrikmoller@recordefuture.com',
