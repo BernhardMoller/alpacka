@@ -32,6 +32,10 @@ def calc_NCOF_from_raw_data(data: list, labels: list, class_perspective: int , n
     t = ks.preprocessing.text.Tokenizer(num_words=nr_words)
     t.fit_on_texts(data)
 
+    # reset t.nr_words to max if it is Larger than len(t.index_words)
+    if len(t.index_word) < t.num_words:
+        t.num_words = len(t.index_word)
+
     "Tranform the letter sentences to integer representations"
     data_int = t.texts_to_sequences(data)
 
@@ -86,7 +90,7 @@ def calc_NCOF_from_raw_data(data: list, labels: list, class_perspective: int , n
 
     if t.num_words:
         words = all_words[:t.num_words]
-        dictionary = {i: word for i , word in enumerate(words)}
+        dictionary = {i: word for i, word in enumerate(words)}
     else:
         dictionary = t.index_word
 
