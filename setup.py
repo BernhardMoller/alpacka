@@ -4,14 +4,14 @@ with open("README.md", "r", encoding="utf-8") as fh:
     long_description = fh.read()
 
 install_requirements = [
-    "keras",
-    "sklearn",
-    "matplotlib",
+    "keras >= 2.4.3",
+    "scikit-learn >= 0.24.2",
+    "matplotlib >= 3.3.4",
     "tensorflow>=2.2",
     "numpy>=1.18"]
 
 setup(name='alpacka',
-      version='0.1.0',
+      version='0.1.2',
       description='The alpacka Python package, used to extract and visualize metadata from text data sets',
       author='Fredrik Möller',
       author_email='fredrikmoller@recordefuture.com',
